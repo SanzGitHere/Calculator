@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modern Calculator</title>
+  <link rel="stylesheet" href="style.css">
+  
+</head>
+<body>
+    <h1>Calculator</h1> 
+
+  <div class="container">
+    <div class="calculator">
+      <div class="display">
+        <div id="history"></div>
+        <div id="current">0</div>
+      </div>
+      <div class="buttons">
+        <button class="btn-operator" onclick="clearAll()">C</button>
+        <button class="btn-operator" onclick="deleteLast()">←</button>
+        <button class="btn-operator" onclick="appendOperator('%')">%</button>
+        <button class="btn-operator" onclick="appendOperator('/')">÷</button>
+
+        <button class="btn-number" onclick="appendNumber(7)">7</button>
+        <button class="btn-number" onclick="appendNumber(8)">8</button>
+        <button class="btn-number" onclick="appendNumber(9)">9</button>
+        <button class="btn-operator" onclick="appendOperator('*')">×</button>
+
+        <button class="btn-number" onclick="appendNumber(4)">4</button>
+        <button class="btn-number" onclick="appendNumber(5)">5</button>
+        <button class="btn-number" onclick="appendNumber(6)">6</button>
+        <button class="btn-operator" onclick="appendOperator('-')">−</button>
+
+        <button class="btn-number" onclick="appendNumber(1)">1</button>
+        <button class="btn-number" onclick="appendNumber(2)">2</button>
+        <button class="btn-number" onclick="appendNumber(3)">3</button>
+        <button class="btn-operator" onclick="appendOperator('+')">+</button>
+
+        <button class="btn-operator" onclick="appendNumber('+/-')">+/-</button>
+        <button class="btn-number" onclick="appendNumber(0)">0</button>
+        <button class="btn-number" onclick="appendNumber('.')">.</button>
+        <button class="btn-equal" onclick="calculate()">=</button>
+      </div>
+    </div>
+    <div class="history-panel">
+      <div class="history-header">
+        <h2>History</h2>
+        <button onclick="clearHistory()">Clear All</button>
+      </div>
+      <ul id="history-list"></ul>
+    </div>
+  </div>
+
+  <script>
+    let currentInput = '';
+    let history = [];
+
+    function appendNumber(num) {
+      if (currentInput === '0') currentInput = ''; // Reset leading zero
+      currentInput += num;
+      document.getElementById('current').textContent = currentInput;
+    }
+
+    function appendOperator(operator) {
+      if (!currentInput) return;
+      currentInput += ` ${operator} `;
+      document.getElementById('current').textContent = currentInput;
+    }
+
+    function calculate() {
+      try {
+        const result = eval(currentInput.replace('×', '*').replace('÷', '/'));
+        document.getElementById('current').textContent = result;
+        history.push(`${currentInput} = ${result}`);
+        updateHistory();
+        currentInput = ''; // Reset for new calculation
+      } catch {
+        document.getElementById('current').textContent = 'Error';
+      }
+    }
+
+    function clearAll() {
+      currentInput = '';
+      document.getElementById('current').textContent = '0';
+    }
+
+    function deleteLast() {
+      currentInput = currentInput.trim().slice(0, -1);
+      document.getElementById('current').textContent = currentInput || '0';
+    }
+
+    function clearHistory() {
+      history = [];
+      updateHistory();
+    }
+
+    function updateHistory() {
+      const historyList = document.getElementById('history-list');
+      historyList.innerHTML = '';
+      history.forEach((entry, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `${entry} <button onclick="deleteHistory(${index})">×</button>`;
+        historyList.appendChild(li);
+      });
+    }
+
+    function deleteHistory(index) {
+      history.splice(index, 1);
+      updateHistory();
+    }
+  </script>
+</body>
+</html>
